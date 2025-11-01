@@ -8,3 +8,15 @@ build/
 coverage/
 .serverless/
 *.log
+
+# Terraform files
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json

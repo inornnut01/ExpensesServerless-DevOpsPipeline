@@ -24,7 +24,16 @@ module "lambda_create_expense" {
   runtime       = "nodejs22.x"
   architectures = ["x86_64"]
 
-  source_path = "../src/dist/expenses/createExpense.js"
+  source_path = [
+    {
+      path = "../src/dist/expenses/createExpense.js"
+      patterns = [
+        "!.*",
+        "createExpense\\.js$",
+        "createExpense\\.js\\.map$"
+      ]
+    }
+  ]
   layers      = [module.lambda_layer_shared.lambda_layer_arn]
 
   environment_variables = {
@@ -72,7 +81,16 @@ module "lambda_get_expenses" {
   runtime       = "nodejs22.x"
   architectures = ["x86_64"]
 
-  source_path = "../src/dist/expenses/getExpenses.js"
+  source_path = [
+    {
+      path = "../src/dist/expenses/getExpenses.js"
+      patterns = [
+        "!.*",
+        "getExpenses\\.js$",
+        "getExpenses\\.js\\.map$"
+      ]
+    }
+  ]
   layers      = [module.lambda_layer_shared.lambda_layer_arn]
 
   environment_variables = {
@@ -121,7 +139,16 @@ module "lambda_update_expense" {
   runtime       = "nodejs22.x"
   architectures = ["x86_64"]
 
-  source_path = "../src/dist/expenses/updateExpense.js"
+  source_path = [
+    {
+      path = "../src/dist/expenses/updateExpense.js"
+      patterns = [
+        "!.*",
+        "updateExpense\\.js$",
+        "updateExpense\\.js\\.map$"
+      ]
+    }
+  ]
   layers      = [module.lambda_layer_shared.lambda_layer_arn]
 
   environment_variables = {
@@ -169,7 +196,16 @@ module "lambda_delete_expense" {
   runtime       = "nodejs22.x"
   architectures = ["x86_64"]
 
-  source_path = "../src/dist/expenses/deleteExpense.js"
+  source_path = [
+    {
+      path = "../src/dist/expenses/deleteExpense.js"
+      patterns = [
+        "!.*",
+        "deleteExpense\\.js$",
+        "deleteExpense\\.js\\.map$"
+      ]
+    }
+  ]
   layers      = [module.lambda_layer_shared.lambda_layer_arn]
 
   environment_variables = {

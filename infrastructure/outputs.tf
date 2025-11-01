@@ -67,3 +67,13 @@ output "lambda_delete_expense_arn" {
   value       = module.lambda_delete_expense.lambda_function_arn
 }
 
+output "amplify_app_id" {
+  description = "Amplify App ID"
+  value       = aws_amplify_app.expenses_frontend.id
+}
+
+output "amplify_app_url" {
+  description = "Amplify App URL"
+  value       = "https://${aws_amplify_branch.main.branch_name}.${aws_amplify_app.expenses_frontend.default_domain}"
+}
+

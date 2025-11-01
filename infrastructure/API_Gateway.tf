@@ -364,5 +364,5 @@ resource "aws_api_gateway_deployment" "expenses_api" {
 resource "aws_api_gateway_stage" "production" {
   deployment_id = aws_api_gateway_deployment.expenses_api.id
   rest_api_id   = aws_api_gateway_rest_api.expenses_api.id
-  stage_name    = "production"
+  stage_name    = var.api_gateway_stage
 }
