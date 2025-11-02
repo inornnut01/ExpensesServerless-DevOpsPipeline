@@ -45,7 +45,7 @@ jobs:
     name: Deploy to AWS
     runs-on: ubuntu-latest
     needs: build
-    ###
+
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
@@ -70,5 +70,25 @@ jobs:
       - name: Extract deployment artifacts
         run: |
           docker create --name temp-prod expense-backend:prod
-          docker cp temp-prod:/app/artifacts ./artifacts
+          docker cp temp-prod:/app/artifacts ./src/dist
           docker rm temp-prod
+
+      - name: Verify artifacts structure
+        run: |
+          echo "=== Lambda Functions ==="
+          ls -lah ./src/dist/expenses/
+          echo "=== Lambda Layer ==="
+          ls -lah ./src/dist/nodejs/
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        working-directory: ./infrastructure
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ./infrastructure
+        run: terraform plan -out=tfplan
