@@ -89,8 +89,18 @@ jobs:
         working-directory: ./infrastructure
         run: terraform init
 
+      - name: Terraform validate and fmt
+        working-directory: ./infrastructure
+        run: terraform validate && terraform fmt
+
       - name: Terraform Plan
         working-directory: ./infrastructure
         run: terraform plan -out=tfplan
+        env:
+          TF_VAR_github_token: ${{ secrets.GITHUB_TOKEN_FOR_AMPLIFY }}
+
+      - name: Terraform Apply
+        working-directory: ./infrastructure
+        run: terraform apply -auto-approve tfplan
         env:
           TF_VAR_github_token: ${{ secrets.GITHUB_TOKEN_FOR_AMPLIFY }}
