@@ -55,7 +55,7 @@ COPY src/package*.json ./
 RUN npm install --omit=dev
 
 # Copy compiled code from build stage
-COPY --from=build /app/dist ./dist
+COPY src/dist ./dist
 
 # Copy any additional files needed for deployment
 COPY src/tsconfig.json ./
