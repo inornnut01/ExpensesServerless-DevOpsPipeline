@@ -10,7 +10,7 @@ jobs:
   ## Test
   test:
     name: Run Test
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
