@@ -74,6 +74,9 @@ RUN cp -r /app/dist/services /app/artifacts/nodejs/ && \
     cp -r /app/dist/utils /app/artifacts/nodejs/ && \
     cp -r /app/node_modules /app/artifacts/nodejs/
 
+# Add package.json to the layer so Node.js knows to use ES modules
+RUN echo '{"type":"module"}' > /app/artifacts/nodejs/package.json
+
 # List all artifacts for verification
 RUN echo "=== Artifacts Structure ===" && \
     ls -lah /app/artifacts/ && \
