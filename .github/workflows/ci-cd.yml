@@ -83,7 +83,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.5.7
+          terraform_version: 1.6.3
 
       - name: Terraform Init
         working-directory: ./infrastructure
@@ -93,8 +93,14 @@ jobs:
         working-directory: ./infrastructure
         run: terraform validate && terraform fmt
 
-      - name: Terraform Destroy
+      - name: Terraform Plan
         working-directory: ./infrastructure
-        run: terraform destroy -auto-approve
+        run: terraform plan -out=tfplan
+        env:
+          TF_VAR_github_token: ${{ secrets.AWS_TOKEN_FOR_AMPLIFY }}
+
+      - name: Terraform Apply
+        working-directory: ./infrastructure
+        run: terraform apply -auto-approve tfplan
         env:
           TF_VAR_github_token: ${{ secrets.AWS_TOKEN_FOR_AMPLIFY }}

@@ -8,12 +8,12 @@ terraform {
     }
   }
 
-  # Optional: Terraform state backend (แนะนำสำหรับ production)
-  # backend "s3" {
-  #   bucket = "your-terraform-state-bucket"
-  #   key    = "expense-tracker/terraform.tfstate"
-  #   region = "us-east-1"
-  # }
+  //Terraform state backend
+  backend "s3" {
+  bucket = "terraformstate32455"
+  key    = "expense-tracker/terraform.tfstate"
+  region = "us-east-1"
+  }
 }
 
 provider "aws" {
