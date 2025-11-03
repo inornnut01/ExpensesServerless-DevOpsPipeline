@@ -7,7 +7,12 @@ module "lambda_layer_shared" {
   description  = "Shared dependencies for expense tracker functions"
 
   compatible_runtimes = ["nodejs22.x"]
-  source_path = "${path.module}/../src/dist/nodejs"
+  source_path         = [
+    {
+      path = "${path.module}/../src/dist/nodejs"
+      prefix_in_zip = "nodejs"
+    }
+  ]
   architectures       = ["x86_64"]
 
   tags = {

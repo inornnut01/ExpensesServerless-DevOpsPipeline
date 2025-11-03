@@ -70,15 +70,22 @@ jobs:
       - name: Extract deployment artifacts
         run: |
           docker create --name temp-prod expense-backend:prod
-          docker cp temp-prod:/app/artifacts/. ./src/dist/
+          # ลบไฟล์เก่าก่อนเพื่อป้องกันการปนกัน
+          rm -rf ./src/dist
+          mkdir -p ./src/dist
+          # Copy เฉพาะสิ่งที่ต้องการ
+          docker cp temp-prod:/app/artifacts/expenses ./src/dist/expenses
+          docker cp temp-prod:/app/artifacts/nodejs ./src/dist/nodejs
           docker rm temp-prod
 
       - name: Verify artifacts structure
         run: |
           echo "=== Lambda Functions ==="
           ls -lah ./src/dist/expenses/
-          echo "=== Lambda Layer ==="
+          echo "=== Lambda Layer Contents ==="
           ls -lah ./src/dist/nodejs/
+          echo "=== Verify node_modules in layer ==="
+          ls -lah ./src/dist/nodejs/node_modules/ | head -20
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
