@@ -55,7 +55,7 @@ COPY src/package*.json ./
 RUN npm install --omit=dev
 
 # Copy compiled code from build stage
-COPY src/dist ./dist
+COPY --from=build /app/dist ./dist
 
 # Create artifacts structure for Terraform
 RUN mkdir -p /app/artifacts/expenses && \

@@ -104,4 +104,3 @@ jobs:
         run: terraform apply -auto-approve tfplan
         env:
           TF_VAR_github_token: ${{ secrets.AWS_TOKEN_FOR_AMPLIFY }}
-#
