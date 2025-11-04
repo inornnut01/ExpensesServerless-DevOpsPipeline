@@ -13,12 +13,11 @@ resource "aws_sns_topic" "expenses_alarms" {
 }
 
 # SNS Email Subscription (requires manual confirmation)
-# Note: In production, replace with actual email address
 # The email recipient will need to confirm subscription via email
 resource "aws_sns_topic_subscription" "expenses_alarms_email" {
   topic_arn = aws_sns_topic.expenses_alarms.arn
   protocol  = "email"
-  endpoint  = "inronut01@gmail.com"
+  endpoint  = var.cloudwatch_alarm_email
 }
 
 # ========================================

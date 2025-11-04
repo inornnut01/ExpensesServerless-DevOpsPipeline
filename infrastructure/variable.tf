@@ -27,3 +27,8 @@ variable "github_repository" {
   type        = string
   default     = "https://github.com/inornnut01/ExpensesSeverless-frontend-Amplify.git"
 }
+
+variable "cloudwatch_alarm_email" {
+  description = "Email address for CloudWatch alarm notifications"
+  type        = string
+}
