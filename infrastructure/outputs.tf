@@ -77,3 +77,33 @@ output "amplify_app_url" {
   value       = "https://${aws_amplify_branch.main.branch_name}.${aws_amplify_app.expenses_frontend.default_domain}"
 }
 
+# Monitoring & Alerting Outputs
+output "sns_topic_arn" {
+  description = "SNS Topic ARN for CloudWatch Alarms"
+  value       = aws_sns_topic.expenses_alarms.arn
+}
+
+output "sns_topic_name" {
+  description = "SNS Topic Name"
+  value       = aws_sns_topic.expenses_alarms.name
+}
+
+output "api_gateway_log_group" {
+  description = "CloudWatch Log Group for API Gateway"
+  value       = aws_cloudwatch_log_group.api_gateway.name
+}
+
+output "cloudwatch_alarms" {
+  description = "List of CloudWatch Alarm names"
+  value = [
+    aws_cloudwatch_metric_alarm.lambda_create_expense_errors.alarm_name,
+    aws_cloudwatch_metric_alarm.lambda_get_expenses_errors.alarm_name,
+    aws_cloudwatch_metric_alarm.lambda_update_expense_errors.alarm_name,
+    aws_cloudwatch_metric_alarm.lambda_delete_expense_errors.alarm_name,
+    aws_cloudwatch_metric_alarm.api_gateway_5xx_errors.alarm_name,
+    aws_cloudwatch_metric_alarm.dynamodb_read_throttle.alarm_name,
+    aws_cloudwatch_metric_alarm.dynamodb_write_throttle.alarm_name,
+    aws_cloudwatch_metric_alarm.dynamodb_user_errors.alarm_name,
+  ]
+}
+
