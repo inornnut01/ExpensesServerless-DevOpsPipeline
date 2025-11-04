@@ -1,3 +1,57 @@
+# ========================================
+# CloudWatch Log Group for API Gateway
+# ========================================
+
+resource "aws_cloudwatch_log_group" "api_gateway" {
+  name              = "/aws/apigateway/expenses-api"
+  retention_in_days = 7
+
+  tags = {
+    Name        = "Serverless Expenses API Logs"
+    Environment = "Production"
+  }
+}
+
+# ========================================
+# IAM Role for API Gateway CloudWatch Logging
+# ========================================
+
+resource "aws_iam_role" "api_gateway_cloudwatch" {
+  name = "expenses-api-gateway-cloudwatch-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name = "Serverless Expenses API Gateway CloudWatch Role"
+  }
+}
+
+# Attach AWS managed policy for CloudWatch Logs
+resource "aws_iam_role_policy_attachment" "api_gateway_cloudwatch" {
+  role       = aws_iam_role.api_gateway_cloudwatch.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+}
+
+# API Gateway Account settings (enables CloudWatch logging for all APIs in the account)
+resource "aws_api_gateway_account" "main" {
+  cloudwatch_role_arn = aws_iam_role.api_gateway_cloudwatch.arn
+}
+
+# ========================================
+# API Gateway REST API
+# ========================================
+
 resource "aws_api_gateway_rest_api" "expenses_api" {
   name        = "expenses-api"
   description = "API Gateway for expenses serverless app"
@@ -518,4 +572,28 @@ resource "aws_api_gateway_stage" "production" {
   deployment_id = aws_api_gateway_deployment.expenses_api.id
   rest_api_id   = aws_api_gateway_rest_api.expenses_api.id
   stage_name    = var.api_gateway_stage
+
+  depends_on = [aws_api_gateway_account.main]
+}
+
+# API Gateway Method Settings (Enable Logging and Metrics)
+resource "aws_api_gateway_method_settings" "all" {
+  rest_api_id = aws_api_gateway_rest_api.expenses_api.id
+  stage_name  = aws_api_gateway_stage.production.stage_name
+  method_path = "*/*"
+
+  settings {
+    # Enable CloudWatch metrics
+    metrics_enabled = true
+
+    # Enable CloudWatch logging
+    logging_level = "INFO"
+
+    # Disable data trace to reduce costs (can be enabled for debugging)
+    data_trace_enabled = false
+
+    # Enable detailed CloudWatch metrics
+    throttling_burst_limit = -1
+    throttling_rate_limit  = -1
+  }
 }

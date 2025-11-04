@@ -44,7 +44,7 @@ RUN ls -la dist/
 # GitHub Actions can use: docker build --target build -t expense-backend:build .
 
 # ========================================
-# Stage 4: Production - Package for deployment
+# Stage 4: Production - Prepare for deployment
 # ========================================
 FROM node:20-alpine AS production
 
@@ -57,39 +57,40 @@ RUN npm install --omit=dev
 # Copy compiled code from build stage
 COPY --from=build /app/dist ./dist
 
-# Copy any additional files needed for deployment
-COPY src/tsconfig.json ./
+# Create artifacts structure for Terraform
+RUN mkdir -p /app/artifacts/expenses && \
+    mkdir -p /app/artifacts/nodejs
 
-# Install zip utility for creating Lambda deployment packages
-RUN apk add --no-cache zip
-
-# Create deployment artifacts structure
-RUN mkdir -p /app/artifacts
-
-# Package Lambda functions (adjust paths as needed for your Lambda functions)
-# Each Lambda function should be zipped with its dependencies
-RUN cd dist && \
-    for func in expenses/*.js; do \
+# Copy Lambda functions (.js files) and rename to .mjs
+RUN for func in /app/dist/expenses/*.js; do \
         if [ -f "$func" ]; then \
             funcname=$(basename "$func" .js); \
-            mkdir -p "/app/artifacts/$funcname"; \
-            mv "$func" "/app/artifacts/$funcname/${funcname}.mjs"; \
-            cd "/app/artifacts/$funcname" && zip -r "../${funcname}.zip" . && cd /app/dist; \
+            cp "$func" "/app/artifacts/expenses/${funcname}.mjs"; \
         fi \
     done
 
-# Package services and utils as Lambda Layer
-RUN mkdir -p /app/artifacts/layer/nodejs && \
-    cp -r dist/services /app/artifacts/layer/nodejs/ && \
-    cp -r dist/utils /app/artifacts/layer/nodejs/ && \
-    cd /app/artifacts/layer && zip -r ../lambda-layer.zip nodejs/
+# Copy shared dependencies for Lambda Layer
+RUN cp -r /app/dist/services /app/artifacts/nodejs/ && \
+    cp -r /app/dist/utils /app/artifacts/nodejs/ && \
+    cp -r /app/node_modules /app/artifacts/nodejs/
+
+# Add package.json to the layer so Node.js knows to use ES modules
+RUN echo '{"type":"module"}' > /app/artifacts/nodejs/package.json
 
 # List all artifacts for verification
-RUN ls -lah /app/artifacts/
+RUN echo "=== Artifacts Structure ===" && \
+    ls -lah /app/artifacts/ && \
+    echo "=== Lambda Functions ===" && \
+    ls -lah /app/artifacts/expenses/ && \
+    echo "=== Lambda Layer ===" && \
+    ls -lah /app/artifacts/nodejs/ && \
+    echo "=== Verify node_modules exists ===" && \
+    ls -lah /app/artifacts/nodejs/node_modules/ | head -20
 
 # Default command
 CMD ["node", "--version"]
 
 # GitHub Actions can use: docker build --target production -t expense-backend:prod .
 # Then extract artifacts: docker create --name temp expense-backend:prod && docker cp temp:/app/artifacts ./artifacts && docker rm temp
+# Note: Terraform will handle zipping these files using source_path configuration
 

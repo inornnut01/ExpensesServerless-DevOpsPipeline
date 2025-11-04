@@ -39,6 +39,8 @@ module "lambda_create_expense" {
     NODE_OPTIONS        = "--enable-source-maps"
   }
 
+  kms_key_arn = ""
+
   attach_policy_json = true
   policy_json = jsonencode({
     Version = "2012-10-17"
@@ -86,6 +88,8 @@ module "lambda_get_expenses" {
     EXPENSES_TABLE_NAME = var.aws_dynamodb_table
     NODE_OPTIONS        = "--enable-source-maps"
   }
+
+  kms_key_arn = ""
 
   attach_policy_json = true
   policy_json = jsonencode({
@@ -136,6 +140,8 @@ module "lambda_update_expense" {
     NODE_OPTIONS        = "--enable-source-maps"
   }
 
+  kms_key_arn = ""
+
   attach_policy_json = true
   policy_json = jsonencode({
     Version = "2012-10-17"
@@ -184,6 +190,8 @@ module "lambda_delete_expense" {
     EXPENSES_TABLE_NAME = var.aws_dynamodb_table
     NODE_OPTIONS        = "--enable-source-maps"
   }
+
+  kms_key_arn = ""
 
   attach_policy_json = true
   policy_json = jsonencode({
