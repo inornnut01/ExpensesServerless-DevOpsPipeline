@@ -38,6 +38,12 @@ This project demonstrates advanced DevOps and Cloud Engineering capabilities by 
 - **Amazon Cognito** - User authentication and authorization
 - **AWS Amplify** - Frontend hosting and continuous deployment
 
+## 📊 Architecture Diagram
+
+![Serverless Architecture_CI/CD](./docs/Serverless_CICD.jpg)
+
+--
+
 ### DevOps Pipeline Architecture
 
 ```
